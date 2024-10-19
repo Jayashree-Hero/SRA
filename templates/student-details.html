@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0; /* Light gray background */
+            color: #333;
+            box-sizing: border-box;
+        }
+        .wrapper {
+            max-width: 1200px; /* Maximum width for larger screens */
+            margin: 20px auto; /* Center the wrapper */
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #4CAF50; /* Green color for header */
+            margin-bottom: 20px;
+        }
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center horizontally */
+            justify-content: center; /* Center vertically */
+            margin: 20px 0; /* Space above and below the upload area */
+            height: 150px; /* Added height for better vertical centering */
+        }
+        input[type="file"] {
+            margin: 10px 0;
+            padding: 12px;
+            border: 2px solid #3498db; /* Blue border */
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            width: 100%; /* Full width */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        input[type="file"]:focus {
+            border-color: #2980b9; /* Darker blue on focus */
+            outline: none;
+        }
+        button {
+            padding: 12px 25px;
+            background-color: #4CAF50; /* Button color */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049; /* Darker shade on hover */
+            transform: translateY(-2px); /* Lift effect */
+        }
+        table {
+            width: 100%; /* Full width */
+            border-collapse: separate; /* Separate borders for better spacing */
+            border-spacing: 0 10px; /* Space between rows */
+            margin: 40px 0; /* Increased space above and below the table */
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 15px; /* Increased padding for table cells */
+            line-height: 1.6; /* Increased line height for better readability */
+        }
+        th {
+            background-color: #4CAF50; /* Green header */
+            color: white;
+            text-align: center;
+        }
+        td {
+            text-align: center;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /* Light gray for even rows */
+        }
+        tr:hover {
+            background-color: #e2f1f8; /* Light blue on hover */
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h2>Upload Student Details</h2>
+        <div class="upload-area">
+            <input type="file" id="fileInput" accept=".xlsx, .xls" />
+            <button id="uploadBtn">Upload</button>
+            <div class="error" id="error"></div>
+        </div>
+        <table id="data-table">
+            <thead>
+                <!-- Dynamic headers will be populated here -->
+            </thead>
+            <tbody>
+                <!-- Data will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script>
+        document.getElementById('uploadBtn').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const errorDiv = document.getElementById('error');
+            const tableBody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+            const tableHead = document.getElementById('data-table').getElementsByTagName('thead')[0];
+
+            // Clear previous errors and table data
+            errorDiv.textContent = '';
+            tableBody.innerHTML = '';
+            tableHead.innerHTML = ''; // Clear previous headers
+
+            if (!file) {
+                errorDiv.textContent = 'Please upload an Excel file.';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                // Create table headers from the first row of data
+                if (jsonData.length > 0) {
+                    const headers = jsonData[0];
+                    const headerRow = tableHead.insertRow();
+                    headers.forEach(header => {
+                        const newHeaderCell = document.createElement('th');
+                        newHeaderCell.textContent = header;
+                        headerRow.appendChild(newHeaderCell);
+                    });
+
+                    // Populate the table with data
+                    jsonData.forEach((row, index) => {
+                        if (index === 0) return; // Skip header row
+                        const newRow = tableBody.insertRow();
+                        row.forEach(cell => {
+                            const newCell = newRow.insertCell();
+                            newCell.textContent = cell;
+                        });
+                    });
+                } else {
+                    errorDiv.textContent = 'No data found in the Excel file.';
+                }
+            };
+
+            reader.onerror = function() {
+                errorDiv.textContent = 'Error reading file.';
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+</body>
+</html>

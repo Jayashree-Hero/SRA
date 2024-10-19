@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f4f4f4, #e2e2e2);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .student-name {
+            cursor: pointer;
+            color: #007bff;
+            font-weight: 600;
+        }
+        .student-name:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+        .student-details {
+            display: none;
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .close-btn {
+            color: red;
+            cursor: pointer;
+            float: right;
+            margin-right: 10px;
+            font-weight: 700;
+        }
+        .close-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function showStudentDetails(regNo) {
+            // Fetch student details from the server
+            fetch(`/student-details/${regNo}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    // Populate and show student details
+                    const studentDetails = document.querySelector('.student-details');
+                    studentDetails.innerHTML = `
+                        <span class="close-btn" onclick="hideStudentDetails()">[Close]</span>
+                        <h2>Student Details</h2>
+                        <p><strong>Student Name:</strong> ${data.student['Student Name']}</p>
+                        <p><strong>Reg. Number:</strong> ${data.student['Reg. Number']}</p>
+                        <h3>Marks:</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Marks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.keys(data.student).map(key => {
+                                    if (['Student Name', 'Reg. Number'].includes(key)) return '';
+                                    return `
+                                        <tr>
+                                            <td>${key}</td>
+                                            <td>${data.student[key] || 'Absent'}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    studentDetails.style.display = 'block';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function hideStudentDetails() {
+            const studentDetails = document.querySelector('.student-details');
+            studentDetails.style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Analytics</h1>
+        {% if error %}
+            <p>{{ error }}</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Registration Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td class="student-name" onclick="showStudentDetails('{{ student.reg_no }}')">{{ student.name }}</td>
+                            <td>{{ student.reg_no }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <div class="student-details"></div>
+    </div>
+</body>
+</html>
+

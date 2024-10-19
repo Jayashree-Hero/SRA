@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .wrapper {
+            width: 1170px;
+            margin: auto;
+        }
+        header {
+            background: linear-gradient(rgba(34, 49, 63, 0.8), rgba(34, 49, 63, 0.8)),
+                        url('/static/admin.jpg') no-repeat center center/cover;
+            height: 100vh;
+            position: relative;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            justify-content: space-between;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            width: 80px;
+        }
+        .institute-name {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+        nav {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .nav-area {
+            display: flex;
+            gap: 15px;
+            list-style: none;
+            flex-wrap: nowrap;
+        }
+        .nav-area li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+        .nav-area li a:hover {
+            background-color: #00bfa6;
+            transform: scale(1.05);
+        }
+        .welcome-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fff;
+        }
+        .welcome-text h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .welcome-text h1 span {
+            color: #00bfa6;
+        }
+        .welcome-text a {
+            margin-top: 20px;
+            display: inline-block;
+            background-color: #00bfa6;
+            padding: 10px 25px;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 14px;
+            color: white;
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+        .welcome-text a:hover {
+            background-color: #019d8a;
+        }
+        section#instructions {
+            padding: 50px;
+            background-color: white;
+            border-radius: 8px;
+            margin: 30px auto;
+            width: 90%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        section#instructions h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .steps {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .step {
+            flex: 1 1 300px; /* Responsive Flexbox for equal width */
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-direction: column; /* Stack image and description vertically */
+            text-align: center; /* Center the text */
+        }
+        .step img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+        .step-description {
+            max-width: 300px;
+            color: #555;
+        }
+        @media (max-width: 768px) {
+            .wrapper {
+                width: 90%;
+            }
+            .logo img {
+                width: 60px;
+            }
+            .welcome-text h1 {
+                font-size: 32px;
+            }
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="wrapper">
+            <div class="logo-area">
+                <div class="logo">
+                    <img src="/static/logo.png" alt="Logo">
+                    <div class="institute-name">Sathyabama Institute of Science and Technology</div>
+                </div>
+                <nav>
+                    <ul class="nav-area">
+                        <li><a href="/student-details">Student Details</a></li>
+                        <li><a href="/cae-analysis">Section Analytics</a></li>
+                        <li><a href="/overall_analytics">Overall Analytics</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="welcome-text">
+            <h1>Student <span>Mark Analytics</span></h1>
+            <a href="#instructions">Get Started</a>
+        </div>
+    </header>
+
+    <section id="instructions">
+        <h2>Instructions</h2>
+        <div class="steps">
+            <div id="student-details" class="step">
+                <img src="/static/ins1.png" alt="Student Details Page">
+                <div class="step-description">
+                    <h3>Check the Excel Sheet Data</h3>
+                    <p>Make sure to check the excel sheet and follow the correct format before uploading it into the Analytics section. The excel sheet data can be viewed in the "Student Details" page.</p>
+                </div>
+            </div>
+
+            <div id="section-analytics" class="step">
+                <img src="/static/ins2.png" alt="Section Analytics Page">
+                <div class="step-description">
+                    <h3>Section-Wise Performance</h3>
+                    <p>In the "Section Analytics" section, analyze student performance by sections and view insights such as highest and average marks.</p>
+                </div>
+            </div>
+
+            <div id="overall-analytics" class="step">
+                <img src="/static/ins3.png" alt="Overall Analytics Page">
+                <div class="step-description">
+                    <h3>View Overall Performance</h3>
+                    <p>Go to the "Overall Analytics" section to upload Excel sheets and analyze the overall performance across all sections.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+
