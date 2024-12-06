@@ -62,7 +62,7 @@ def analytics(filename):
         'Pass Percentage': []
     }
 
-    for subject in data.columns[3:]:  # Skip non-subject columns
+    for subject in data.columns[3:]:  
         subject_data = data[subject]
 
         total_absent = subject_data.isna().sum()
@@ -76,12 +76,13 @@ def analytics(filename):
         subject_metrics['Total Present'].append(total_present)
         subject_metrics['Total Fail'].append(total_fail)
         subject_metrics['Total Pass'].append(total_pass)
-        subject_metrics['Pass Percentage'].append(pass_percentage)
+        subject_metrics['Pass Percentage'].append(round(pass_percentage, 3))#.applymap(lambda x: f"{x:.3f}" if isinstance(x, (int, float))else x)
 
     subject_metrics_df = pd.DataFrame(subject_metrics)
+    #subject_metrics_df = subject_metrics_df.map(lambda x: f"{x:.3f}" if isinstance(x, (int, float))else x)
     summary_statistics = {
         "Total Students": total_students,
-        "Overall Pass Percentage": subject_metrics_df['Pass Percentage'].mean()
+        "Overall Pass Percentage": round(subject_metrics_df['Pass Percentage'].mean(), 3)
     }
 
     return render_template('analytics.html', 
@@ -89,7 +90,6 @@ def analytics(filename):
                            summary=summary_statistics, 
                            section=section)
 
-# Upload Marks and Staff Details for Overall Analytics
 @app.route('/upload-overall', methods=['POST'])
 def upload_overall():
     if 'marks_file' not in request.files or 'staff_file' not in request.files:
@@ -123,18 +123,15 @@ def view_overall_analytics(marks_filename, staff_filename):
     except Exception as e:
         return f"Error reading files: {str(e)}", 500
 
-    # Clean column names
     marks_data.columns = marks_data.columns.str.strip()
 
-    # Ensure 'Section' column exists
+
     if 'Section' not in marks_data.columns:
         return "The 'Section' column is missing. Please check the Excel file.", 400
 
-    # Convert all subject columns to numeric (starting from the 5th column)
     for column in marks_data.columns[4:]:
         marks_data[column] = pd.to_numeric(marks_data[column], errors='coerce')
 
-    # Debug: Print if any NaN values exist in the marks columns
     print("NaN values per column:\n", marks_data.isna().sum())
 
     analytics_data = {
@@ -142,10 +139,10 @@ def view_overall_analytics(marks_filename, staff_filename):
         'Total Absent': [], 'Total Present': [], 'Total Fail': [], 
         'Total Pass': [], 'Pass Percentage': [], 'Overall Percentage': []
     }
-    section_count = len(marks_data['Section'].unique())  # Total number of sections
+    subject_count = len(staff_data['Course Code'].unique())
+    section_count = len(marks_data['Section'].unique())  
     total_students = len(marks_data)
 
-    # Process each course code and section
     for course_code in marks_data.columns[4:]:
         cumulative_pass_percentage = 0  
         for section in marks_data['Section'].unique():
@@ -168,11 +165,12 @@ def view_overall_analytics(marks_filename, staff_filename):
                 analytics_data['Total Present'].append(total_present)
                 analytics_data['Total Fail'].append(total_fail)
                 analytics_data['Total Pass'].append(total_pass)
-                analytics_data['Pass Percentage'].append(pass_percentage)
+                analytics_data['Pass Percentage'].append(round(pass_percentage, 3))
             cumulative_pass_percentage += pass_percentage
         overall_pass_percentage = cumulative_pass_percentage / section_count
+        overall_total_pass_percentage = cumulative_pass_percentage / subject_count
         for _ in range(section_count):
-            analytics_data['Overall Percentage'].append(overall_pass_percentage)
+            analytics_data['Overall Percentage'].append(round(overall_pass_percentage,3))
     analytics_df = pd.DataFrame(analytics_data)
 
     if analytics_df.empty:
@@ -183,7 +181,7 @@ def view_overall_analytics(marks_filename, staff_filename):
                            summary={
                                "Total Sections": section_count,
                                "Total Students": total_students,
-                               
+                               "Overall Pass Percentage": overall_total_pass_percentage,  
                            })
 
 if __name__ == '__main__':
