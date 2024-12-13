@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Arrear Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+        }
+        td {
+            text-align: center;
+        }
+        .summary {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .button-group button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            margin: 0 10px;
+        }
+        .button-group button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Overall Analysis</h1>
+
+        <div class="summary">
+            <h2>Summary Statistics</h2>
+            <p>Total Students: {{ summary["Total Students"] }}</p>
+            <p>Total Sections: {{ summary["Total Sections"] }}</p>
+            <p>Overall Pass Percentage: {{ summary["Overall Pass Percentage"] }}%</p>
+            <p>1 Arrear: {{ summary["1 Arrear"] }}</p>
+            <p>2 Arrears: {{ summary["2 Arrears"] }}</p>
+            <p>3 Arrears: {{ summary["3 Arrears"] }}</p>
+            <p>4 Arrears: {{ summary["4 Arrears"] }}</p>
+        </div>
+
+        <h2>Detailed Analytics</h2>
+        <div id="analytics-content">
+            {% for table in tables %}
+                {{ table | safe }}
+            {% endfor %}
+        </div>
+
+        <div class="button-group">
+            <button onclick="window.print()">Print</button>
+        </div>
+    </div>
+</body>
+</html>
