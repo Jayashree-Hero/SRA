@@ -11,6 +11,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def index():
     return render_template('index.html')
 
+@app.route('/index')
+def index2():
+    return render_template('index.html')
+
 @app.route('/cae-analysis')
 def cae_analysis():
     return render_template('cae-analysis.html')
@@ -23,7 +27,14 @@ def overall_analytics():
 def arrear_analytics():
     return render_template('arrear_upload.html')
 
-# Upload Section Data
+@app.route('/arrears')
+def arrears():
+    return render_template('arrears.html')
+
+@app.route('/highest-marks')
+def highest():
+    return render_template('highest-marks.html')
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -33,7 +44,7 @@ def upload_file():
     section = request.form.get('section')
 
     if file.filename == '' or not section:
-        return redirect(request.url)  # Ensure valid file and section
+        return redirect(request.url)  
 
     if file:
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{section}_{file.filename}")
@@ -45,12 +56,12 @@ def analytics(filename):
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     data = pd.read_excel(file_path)
 
-    # Replace 'AB' or non-numeric values with NaN
     data = data.replace('AB', pd.NA).apply(pd.to_numeric, errors='coerce')
 
     fail_mark = 25
     total_students = len(data)
     section = request.args.get('section', 'Unknown')
+    arrear_counts = {1: 0, 2: 0, 3: 0, '4+': 0}  
 
     subject_metrics = {
         'Section': section,
@@ -61,6 +72,17 @@ def analytics(filename):
         'Total Pass': [],
         'Pass Percentage': []
     }
+
+    for _, student_row in data.iterrows():
+        arrear_count = 0
+        for course_code in data.columns[4:]:
+            mark = student_row[course_code]
+            if pd.isna(mark) or mark < fail_mark:  
+                arrear_count += 1
+        if arrear_count in arrear_counts:
+            arrear_counts[arrear_count] += 1
+        elif arrear_count >= 4:  
+            arrear_counts['4+'] += 1
 
     for subject in data.columns[3:]:  
         subject_data = data[subject]
@@ -76,19 +98,24 @@ def analytics(filename):
         subject_metrics['Total Present'].append(total_present)
         subject_metrics['Total Fail'].append(total_fail)
         subject_metrics['Total Pass'].append(total_pass)
-        subject_metrics['Pass Percentage'].append(round(pass_percentage, 3))#.applymap(lambda x: f"{x:.3f}" if isinstance(x, (int, float))else x)
+        subject_metrics['Pass Percentage'].append(round(pass_percentage, 3))
 
     subject_metrics_df = pd.DataFrame(subject_metrics)
-    #subject_metrics_df = subject_metrics_df.map(lambda x: f"{x:.3f}" if isinstance(x, (int, float))else x)
+    
     summary_statistics = {
         "Total Students": total_students,
-        "Overall Pass Percentage": round(subject_metrics_df['Pass Percentage'].mean(), 3)
+        "Overall Pass Percentage": round(subject_metrics_df['Pass Percentage'].mean(), 3),
+        "1 Arrear": arrear_counts[1],
+        "2 Arrears": arrear_counts[2],
+        "3 Arrears": arrear_counts[3],
+        "4+ Arrears": arrear_counts['4+'] 
     }
 
     return render_template('analytics.html', 
                            tables=[subject_metrics_df.to_html(index=False)], 
                            summary=summary_statistics, 
                            section=section)
+
 
 @app.route('/upload-overall', methods=['POST'])
 def upload_overall():
@@ -142,6 +169,18 @@ def view_overall_analytics(marks_filename, staff_filename):
     subject_count = len(staff_data['Course Code'].unique())
     section_count = len(marks_data['Section'].unique())  
     total_students = len(marks_data)
+    arrear_counts = {1: 0, 2: 0, 3: 0, '4+': 0}
+
+    for _, student_row in marks_data.iterrows():
+        arrear_count = 0
+        for course_code in marks_data.columns[4:]:
+            mark = student_row[course_code]
+            if pd.isna(mark) or mark < 25:  
+                arrear_count += 1
+        if arrear_count in arrear_counts:
+            arrear_counts[arrear_count] += 1
+        elif arrear_count >= 4: 
+            arrear_counts['4+'] += 1
 
     for course_code in marks_data.columns[4:]:
         cumulative_pass_percentage = 0  
@@ -181,7 +220,11 @@ def view_overall_analytics(marks_filename, staff_filename):
                            summary={
                                "Total Sections": section_count,
                                "Total Students": total_students,
-                               "Overall Pass Percentage": overall_total_pass_percentage,  
+                               "Overall Pass Percentage": overall_total_pass_percentage,
+                               "1 Arrear": arrear_counts[1],
+                               "2 Arrears": arrear_counts[2],
+                               "3 Arrears": arrear_counts[3],
+                               "4+ Arrears": arrear_counts['4+'],   
                            })
 
 @app.route('/arrear_upload', methods=['GET', 'POST'])
@@ -240,13 +283,24 @@ def view_arrear_analytics(marks_filename, staff_filename):
     subject_count = len(staff_data['Course Code'].unique())
     section_count = len(marks_data['Section'].unique())  
     total_students = len(marks_data)
-    arrear_counts = {1: 0, 2: 0, 3: 0, 4: 0}
+    arrear_counts = {1: 0, 2: 0, 3: 0, '4+': 0} 
 
     for _, student_row in marks_data.iterrows():
         arrear_count = 0
         for course_code in marks_data.columns[4:]:
             mark = student_row[course_code]
-            if pd.isna(mark) or mark < 50:  # Count as arrear if absent or mark < 50
+            if pd.isna(mark) or mark < 50:  
+                arrear_count += 1
+        if arrear_count in arrear_counts:
+            arrear_counts[arrear_count] += 1
+        elif arrear_count >= 4:  
+            arrear_counts['4+'] += 1
+
+    for _, student_row in marks_data.iterrows():
+        arrear_count = 0
+        for course_code in marks_data.columns[4:]:
+            mark = student_row[course_code]
+            if pd.isna(mark) or mark < 50:  
                 arrear_count += 1
         if arrear_count in arrear_counts:
             arrear_counts[arrear_count] += 1
@@ -294,9 +348,244 @@ def view_arrear_analytics(marks_filename, staff_filename):
             "1 Arrear": arrear_counts[1],
             "2 Arrears": arrear_counts[2],
             "3 Arrears": arrear_counts[3],
-            "4 Arrears": arrear_counts[4],
+            "4+ Arrears": arrear_counts['4+']
         }
     )
+
+
+@app.route('/arrears_up', methods=['GET', 'POST'])
+def arrears_up_file():
+    if request.method == 'POST':
+        if 'marks_file' not in request.files:
+            return redirect(request.url)
+
+        marks_file = request.files['marks_file']
+
+        if marks_file.filename == '':
+            return redirect(request.url)
+
+        if marks_file:
+            marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_file.filename)
+
+            marks_file.save(marks_path)
+
+            return redirect(url_for('arrears_Fif',
+                                    marks_filename=marks_file.filename))
+        
+
+@app.route('/arrears_Fif/<marks_filename>')
+def arrears_Fif(marks_filename):
+    marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_filename)
+    try:
+        marks_data = pd.read_excel(marks_path)
+    except Exception as e:
+        return f"Error reading files: {str(e)}", 500
+
+    marks_data.columns = marks_data.columns.str.strip()
+
+    if 'Section' not in marks_data.columns:
+        return "The 'Section' column is missing. Please check the Excel file.", 400
+
+    print(marks_data['Section'].head())
+
+    marks_data['Section'] = marks_data['Section'].astype(str).str.strip().str.replace(r'\s+', '', regex=True)
+
+    if marks_data['Section'].isna().sum() > 0:
+        marks_data['Section'] = marks_data['Section'].fillna('Unknown')  
+
+    for column in marks_data.columns[4:]:
+        marks_data[column] = pd.to_numeric(marks_data[column], errors='coerce')
+
+    arrear_students = [] 
+    for _, student_row in marks_data.iterrows():
+        arrear_count = 0
+        for course_code in marks_data.columns[4:]:
+            mark = student_row[course_code]
+            if pd.isna(mark) or mark < 25:  
+                arrear_count += 1
+        if arrear_count > 0:
+            arrear_students.append({
+                'register_number': student_row['Reg. Number'],
+                'student_name': student_row['Student Name'],
+                'section': student_row['Section'],
+                'arrears': arrear_count
+            })
+
+    return render_template('arrears_Fif.html', arrear_students=arrear_students)
+
+
+@app.route('/arrears_upn', methods=['GET', 'POST'])
+def arrears_upn_file():
+    if request.method == 'POST':
+        if 'marks_file' not in request.files:
+            return redirect(request.url)
+
+        marks_file = request.files['marks_file']
+
+        if marks_file.filename == '':
+            return redirect(request.url)
+
+        if marks_file:
+            marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_file.filename)
+
+            marks_file.save(marks_path)
+
+            return redirect(url_for('arrears_hun',
+                                    marks_filename=marks_file.filename))
+        
+@app.route('/arrears_hun/<marks_filename>')
+def arrears_hun(marks_filename):
+    marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_filename)
+    try:
+        marks_data = pd.read_excel(marks_path)
+    except Exception as e:
+        return f"Error reading files: {str(e)}", 500
+
+    marks_data.columns = marks_data.columns.str.strip()
+
+    if 'Section' not in marks_data.columns:
+        return "The 'Section' column is missing. Please check the Excel file.", 400
+
+    print(marks_data['Section'].head())
+
+    marks_data['Section'] = marks_data['Section'].astype(str).str.strip().str.replace(r'\s+', '', regex=True)
+
+    if marks_data['Section'].isna().sum() > 0:
+        marks_data['Section'] = marks_data['Section'].fillna('Unknown')  
+
+    for column in marks_data.columns[4:]:
+        marks_data[column] = pd.to_numeric(marks_data[column], errors='coerce')
+
+    arrear_students = [] 
+    for _, student_row in marks_data.iterrows():
+        arrear_count = 0
+        for course_code in marks_data.columns[4:]:
+            mark = student_row[course_code]
+            if pd.isna(mark) or mark < 50:  
+                arrear_count += 1
+        if arrear_count > 0:
+            arrear_students.append({
+                'register_number': student_row['Reg. Number'],
+                'student_name': student_row['Student Name'],
+                'section': student_row['Section'],
+                'arrears': arrear_count
+            })
+
+    return render_template('arrears_hun.html', arrear_students=arrear_students)
+
+
+@app.route('/highest_m', methods=['GET', 'POST'])
+def highest_m():
+    if request.method == 'POST':
+        if 'marks_file' not in request.files:
+            return redirect(request.url)
+
+        marks_file = request.files['marks_file']
+
+        if marks_file.filename == '':
+            return redirect(request.url)
+
+        if marks_file:
+            marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_file.filename)
+
+            marks_file.save(marks_path)
+
+            return redirect(url_for('highest_mark',
+                                    marks_filename=marks_file.filename))
+        
+        
+@app.route('/highest-mark/<marks_filename>')
+def highest_mark(marks_filename):
+    marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_filename)
+    try:
+        marks_data = pd.read_excel(marks_path)
+    except Exception as e:
+        return f"Error reading files: {str(e)}", 500
+
+    marks_data.columns = marks_data.columns.str.strip()
+
+    if 'Section' not in marks_data.columns or 'Reg. Number' not in marks_data.columns or 'Student Name' not in marks_data.columns:
+        return "Required columns are missing. Please check the Excel file.", 400
+
+    marks_data['Section'] = marks_data['Section'].astype(str).str.strip().str.replace(r'\s+', '', regex=True)
+
+    if marks_data['Section'].isna().sum() > 0:
+        marks_data['Section'] = marks_data['Section'].fillna('Unknown')
+
+    for column in marks_data.columns[4:]:
+        marks_data[column] = pd.to_numeric(marks_data[column], errors='coerce')
+
+    marks_data['Total Marks'] = marks_data.iloc[:, 4:].sum(axis=1)
+
+    top_students = marks_data.sort_values(by='Total Marks', ascending=False).head(30)
+
+    top_30_students = []
+    for _, student_row in top_students.iterrows():
+        top_30_students.append({
+            'register_number': student_row['Reg. Number'],
+            'student_name': student_row['Student Name'],
+            'section': student_row['Section'],
+            'total_marks': student_row['Total Marks']
+        })
+
+    return render_template('highest-mark.html', top_30_students=top_30_students)
+
+
+@app.route('/highest_ma', methods=['GET', 'POST'])
+def highest_ma():
+    if request.method == 'POST':
+        if 'marks_file' not in request.files:
+            return redirect(request.url)
+
+        marks_file = request.files['marks_file']
+
+        if marks_file.filename == '':
+            return redirect(request.url)
+
+        if marks_file:
+            marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_file.filename)
+
+            marks_file.save(marks_path)
+
+            return redirect(url_for('highest_mark_u',
+                                    marks_filename=marks_file.filename))
+        
+        
+@app.route('/highest_mark/<marks_filename>')
+def highest_mark_u(marks_filename):
+    marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_filename)
+    try:
+        marks_data = pd.read_excel(marks_path)
+    except Exception as e:
+        return f"Error reading files: {str(e)}", 500
+
+    marks_data.columns = marks_data.columns.str.strip()
+
+    if 'Section' not in marks_data.columns or 'Reg. Number' not in marks_data.columns or 'Student Name' not in marks_data.columns:
+        return "Required columns are missing. Please check the Excel file.", 400
+
+    marks_data['Section'] = marks_data['Section'].astype(str).str.strip().str.replace(r'\s+', '', regex=True)
+
+    if marks_data['Section'].isna().sum() > 0:
+        marks_data['Section'] = marks_data['Section'].fillna('Unknown')
+
+    for column in marks_data.columns[4:]:
+        marks_data[column] = pd.to_numeric(marks_data[column], errors='coerce')
+
+    marks_data['Total Marks'] = marks_data.iloc[:, 4:].sum(axis=1)
+
+    top_students = marks_data.sort_values(by='Total Marks', ascending=False).head(30)
+
+    top_30_students = []
+    for _, student_row in top_students.iterrows():
+        top_30_students.append({
+            'register_number': student_row['Reg. Number'],
+            'student_name': student_row['Student Name'],
+            'section': student_row['Section'],
+            'total_marks': student_row['Total Marks']
+        })
+
+    return render_template('highest_mark.html', top_30_students=top_30_students)
 
 
 if __name__ == '__main__':

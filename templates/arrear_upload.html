@@ -6,7 +6,6 @@
     <title>Overall Analysis</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* Global Styles */
         * {
             margin: 0;
             padding: 0;
@@ -15,14 +14,79 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f4f8;
+            background-color: #f4f4f4;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
-        /* Container Styling */
+        .wrapper {
+            width: 100%;
+            background-color: #821238;
+            padding: 20px 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            background: linear-gradient(rgba(0, 0, 0, 0.466), rgba(34, 49, 63, 0.8)),
+                        url('/static/admin.jpg') no-repeat center center/cover;
+            height: 100vh;
+            position: relative;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .logo img {
+            height: 50px;
+            margin-right: 15px;
+        }
+        .institute-name {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+        nav {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .nav-area {
+            display: flex;
+            gap: 15px;
+            list-style: none;
+            flex-wrap: nowrap;
+        }
+        .nav-area li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+        .nav-area li a:hover {
+            background-color: #FF2E66;
+            transform: scale(1.05);
+        }
+
         .container {
             width: 90%;
             max-width: 600px;
@@ -30,6 +94,8 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            margin-top: 70px;
+            margin-bottom: 20px;
         }
 
         h2 {
@@ -64,10 +130,9 @@
             outline: none;
         }
 
-        /* Submit Button Styling */
         .form-group input[type="submit"] {
             width: 100%;
-            background-color: #00bfa6;
+            background-color: #9E1C40;
             color: white;
             border: none;
             padding: 12px;
@@ -78,14 +143,90 @@
         }
 
         .form-group input[type="submit"]:hover {
-            background-color: #019d8a;
+            background-color: #FF2E66;
             transform: scale(1.02);
+        }
+        section#instructions {
+            padding: 40px 20px;
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            margin: 40px auto;
+            width: 90%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        section#instructions h2 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #444;
+            font-weight: 700;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            flex: 1 1 300px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .step-icon img {
+            width: 100%;
+            max-width: 500px; 
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .step h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
+    <div class="wrapper">
+        <div class="logo-area">
+            <div class="logo">
+                <a href="/index">
+                    <img src="/static/logo.png" alt="Logo">
+                    <div class="institute-name">Sathyabama Institute of Science and Technology</div>
+                </a>
+            </div>
+            <nav>
+                <ul class="nav-area">
+                    <li><a href="/cae-analysis">Section Analysis</a></li>
+                    <li><a href="/overall_analytics">Semester Analysis</a></li>
+                    <li><a href="/arrears">Insights</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
     <div class="container">
-        <h2>Upload Data</h2>
+        <h2>Overall Data</h2>
         <form action="/arrear_upload" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="marks_file">Upload Marks Excel File:</label>
@@ -96,9 +237,10 @@
                 <input type="file" id="staff_file" name="staff_file" accept=".xlsx" required>
             </div>
             <div class="form-group">
-                <input type="submit" value="Upload">
+                <input type="submit" value="Analyze">
             </div>
         </form>
     </div>
+    
 </body>
 </html>

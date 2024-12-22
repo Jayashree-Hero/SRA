@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAE Analysis</title>
+    <title>Overall Analysis</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -11,6 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f4f4f4;
@@ -19,6 +20,7 @@
             align-items: center;
             min-height: 100vh;
         }
+
         .wrapper {
             width: 100%;
             background-color: #821238;
@@ -85,21 +87,27 @@
             transform: scale(1.05);
         }
 
-        .container {
+        .forms-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
             width: 90%;
-            max-width: 600px;
+            max-width: 1200px;
+            margin-top: 90px;
+        }
+
+        .container {
+            width: 48%; 
             background-color: white;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            margin-top: 70px; 
-            margin-bottom: 20px; 
         }
 
         h2 {
             text-align: center;
-            color: #2c3e50;
             margin-bottom: 20px;
+            color: #2c3e50;
             font-weight: 600;
         }
 
@@ -114,7 +122,6 @@
             color: #34495e;
         }
 
-        .form-group input[type="text"], 
         .form-group input[type="file"] {
             width: 100%;
             padding: 12px 15px;
@@ -124,9 +131,8 @@
             transition: border-color 0.3s ease;
         }
 
-        .form-group input[type="text"]:focus, 
         .form-group input[type="file"]:focus {
-            border-color: #821238;
+            border-color: #00bfa6;
             outline: none;
         }
 
@@ -217,30 +223,40 @@
             </div>
             <nav>
                 <ul class="nav-area">
-                    <li><a href="/overall_analytics">Semester Analysis</a></li>
-                    <li><a href="/arrear_upload">Overall Analysis</a></li>
-                    <li><a href="/arrears">Insights</a></li>
+                    <li><a href="/arrears">Students With Arrears</a></li>
+                    <li><a href="/overall_analytics">Students Without Arrears</a></li>
+                    <li><a href="/cae-analysis">Analytics</a></li>
                 </ul>
             </nav>
         </div>
     </div>
 
-    <div class="container">
-        <h2>CAE Data</h2>
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="section">Enter Section Name:</label>
-                <input type="text" id="section" name="section" placeholder="e.g., A1" required>
-            </div>
-            <div class="form-group">
-                <label for="file">Upload Excel File:</label>
-                <input type="file" id="file" name="file" accept=".xlsx, .xls" required>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Analyze">
-            </div>
-        </form>
+    <div class="forms-container">
+        <div class="container">
+            <h2>Students with Highest Marks [50 Marks]</h2>
+            <form action="/highest_m" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="marks_file">Upload Marks Excel File:</label>
+                    <input type="file" id="marks_file" name="marks_file" accept=".xlsx" required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Upload">
+                </div>
+            </form>
+        </div>
+
+        <div class="container">
+            <h2>Students with Highest Marks [100 Marks]</h2>
+            <form action="/highest_ma" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="marks_file">Upload Marks Excel File:</label>
+                    <input type="file" id="marks_file" name="marks_file" accept=".xlsx" required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Upload">
+                </div>
+            </form>
+        </div>
     </div>
-    
 </body>
 </html>

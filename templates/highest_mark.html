@@ -6,11 +6,11 @@
     <title>View Arrear Upload</title>
     <style>
         body {
-            font-family: 'Roboto', 'Open Sans', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            background-color: #f9f9f9;
+            background-color: #f0f0f0;
             color: #333;
         }
         .wrapper {
@@ -78,7 +78,6 @@
             background-color: #FF2E66;
             transform: scale(1.05);
         }
-
         .container {
             max-width: 1100px;
             margin: 40px auto;
@@ -202,7 +201,7 @@
 
             table {
                 font-size: 12px; 
-                width: 100%; 
+                width: 99%; 
                 border-collapse: collapse;
                 margin-top: 20px;
                 margin-left: 0; 
@@ -261,7 +260,6 @@
                 line-height: 1.5;
             }
         }
-
     </style>
 </head>
 <body>
@@ -275,34 +273,36 @@
             </div>
             <nav>
                 <ul class="nav-area">
-                    <li><a href="/cae-analysis">CAE Analysis</a></li>
-                    <li><a href="/overall_analytics">Semester Analysis</a></li>
-                    <li><a href="/arrear_upload">Overall Analysis</a></li>
-                    <li><a href="/arrears">Insights</a></li>
+                    <li><a href="/arrears">With Arrear</a></li>
+                    <li><a href="/highest-marks">Highest Marks</a></li>
+                    <li><a href="/overall_analytics">Without Arrears</a></li>
+                    <li><a href="/cae-analysis">Analytics</a></li>
                 </ul>
             </nav>
         </div>
     </div>
     <div class="container">
-        <h1><b>OVERALL ANALYSIS</b></h1>
-
-        <div class="summary">
-            <h2>Summary Statistics</h2>
-            <p>Total Students: {{ summary["Total Students"] }}</p>
-            <p>Total Sections: {{ summary["Total Sections"] }}</p>
-            <p>Overall Pass Percentage: {{ summary["Overall Pass Percentage"] }}%</p>
-            <p>1 Arrear: {{ summary["1 Arrear"] }}</p>
-            <p>2 Arrears: {{ summary["2 Arrears"] }}</p>
-            <p>3 Arrears: {{ summary["3 Arrears"] }}</p>
-            <p>4 and More Arrears: {{ summary["4+ Arrears"] }}</p>
-        </div>
-
-        <h2>Detailed Analytics</h2>
-        <div id="analytics-content">
-            {% for table in tables %}
-                {{ table | safe }}
-            {% endfor %}
-        </div>
+        <h2><b>STUDENTS IN TOP 30</b></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Register Number</th>
+                    <th>Student Name</th>
+                    <th>Section</th>
+                    <th>Total Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in top_30_students %}
+                <tr>
+                    <td>{{ student.register_number }}</td>
+                    <td>{{ student.student_name }}</td>
+                    <td>{{ student.section }}</td>
+                    <td>{{ student.total_marks }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
         <div class="button-group">
             <button onclick="window.print()">Print</button>

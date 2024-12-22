@@ -13,77 +13,288 @@
             background-color: #f0f0f0;
             color: #333;
         }
-        .container {
-            padding: 20px;
+        .wrapper {
+            width: 100%;
+            background-color: #821238;
+            padding: 20px 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            background: linear-gradient(rgba(0, 0, 0, 0.466), rgba(34, 49, 63, 0.8)),
+                        url('/static/admin.jpg') no-repeat center center/cover;
+            height: 100vh;
+            position: relative;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             max-width: 1200px;
-            margin: auto;
-            background-color: #fff;
+            margin: 0 auto;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .logo img {
+            height: 50px;
+            margin-right: 15px;
+        }
+        .institute-name {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+        nav {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .nav-area {
+            display: flex;
+            gap: 15px;
+            list-style: none;
+            flex-wrap: nowrap;
+        }
+        .nav-area li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+        .nav-area li a:hover {
+            background-color: #FF2E66;
+            transform: scale(1.05);
+        }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
         }
         h1 {
             text-align: center;
-            color: #4CAF50;
+            color: #821238;
+            font-weight: 500;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
+        h2 {
             text-align: center;
-        }
-        td {
-            text-align: center;
+            color: #821238;
+            margin-top: 20px;
         }
         .summary {
             margin: 20px 0;
             padding: 20px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+            border-radius: 10px;
+            background-color: #fafafa;
+            border: 1px solid #dfe6e9;
+        }
+        .summary p {
+            margin: 10px 0;
+            color: #2d3436;
+            font-weight: 400;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        table th, table td {
+            text-align: center;
+            padding: 12px 15px;
             border: 1px solid #ddd;
+        }
+        table th {
+            background-color: #821238;
+            color: #fff;
+            font-weight: 500;
+        }
+        table tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+        table tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+        table tr:hover {
+            background-color: #ffeeee;
         }
         .button-group {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-top: 30px;
         }
         .button-group button {
-            background-color: #4CAF50;
+            background-color: #9E1C40;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 25px;
             font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            border-radius: 5px;
+            transition: all 0.3s ease;
             margin: 0 10px;
         }
         .button-group button:hover {
-            background-color: #45a049;
+            background-color: #FF2E66;
         }
-    </style>
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            table th, table td {
+                padding: 10px;
+                font-size: 12px;
+            }
+            .button-group button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+        
+        @media print {
+            .wrapper, nav, .button-group {
+                display: none; 
+            }
+            .container {
+                box-shadow: none; 
+                padding: 0;
+                margin: 0; 
+                width: 100%; 
+                background-color: #fff; 
+            }
+            h1, h2 {
+                color: #2e0714; 
+                font-size: 20px; 
+                text-align: left; 
+                margin-bottom: 20px;
+            }
+
+            .summary {
+                border: 1px solid #ddd;
+                padding: 15px;
+                background-color: #f9f9f9; 
+                border-radius: 8px; 
+                margin-bottom: 30px; 
+                text-align: left; 
+            }
+
+            .summary p {
+                margin: 10px 0;
+                font-size: 14px; 
+            }
+
+            table {
+                font-size: 12px; 
+                width: 99%; 
+                border-collapse: collapse;
+                margin-top: 20px;
+                margin-left: 0; 
+                margin-right: 0; 
+                table-layout: auto; 
+            }
+
+            table th, table td {
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: left; 
+                vertical-align: middle;
+                word-wrap: break-word; 
+                white-space: normal; 
+            }
+
+            table th {
+                background-color: #821238; 
+                color: white;
+                font-weight: bold;
+                font-size: 14px; 
+            }
+
+            table tr:nth-child(odd) td {
+                background-color: #fafafa; 
+            }
+
+            table tr:nth-child(even) td {
+                background-color: #fff;
+            }
+
+            table th:nth-child(2), table td:nth-child(2) { 
+                min-width: 250px; 
+                text-align: left; 
+            }
+
+            body {
+                font-size: 12px; 
+                color: black;
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+
+            @page {
+                size: auto;
+                margin: 10mm; 
+            }
+
+            .container {
+                page-break-before: always; 
+                page-break-inside: avoid; 
+            }
+
+            table td, table th {
+                line-height: 1.5;
+            }
+        }
+        </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.4.2/html-docx.min.js"></script>
 </head>
 <body>
+    <div class="wrapper">
+        <div class="logo-area">
+            <div class="logo">
+                <a href="/index">
+                    <img src="/static/logo.png" alt="Logo">
+                    <div class="institute-name">Sathyabama Institute of Science and Technology</div>
+                </a>
+            </div>
+            <nav>
+                <ul class="nav-area">
+                    <li><a href="/cae-analysis">CAE Analysis</a></li>
+                    <li><a href="/overall_analytics">Semester Analysis</a></li>
+                    <li><a href="/arrear_upload">Overall Analysis</a></li>
+                    <li><a href="/arrears">Insights</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
     <div class="container">
-        <h1>Student Analytics</h1>
+        <h1><b>SECTION ANALYSIS</b></h1>
         
-        <!-- Summary Statistics Section -->
         <div class="summary">
             <h2>Summary Statistics</h2>
             <p>Total Students: {{ summary["Total Students"] }}</p>
             <p>Overall Pass Percentage: {{ summary["Overall Pass Percentage"] }}%</p>
+            <p>1 Arrear: {{ summary["1 Arrear"] }}</p>
+            <p>2 Arrears: {{ summary["2 Arrears"] }}</p>
+            <p>3 Arrears: {{ summary["3 Arrears"] }}</p>
+            <p>4 and More Arrears: {{ summary["4+ Arrears"] }}</p>
         </div>
 
-        <!-- Detailed Analytics Section -->
         <h2>Detailed Analytics</h2>
         <div id="analytics-content">
             {% for table in tables %}
@@ -91,7 +302,6 @@
             {% endfor %}
         </div>
         
-        <!-- Button Group -->
         <div class="button-group">
             <button onclick="window.print()">Print</button>
         </div>
