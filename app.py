@@ -35,6 +35,10 @@ def arrears():
 def highest():
     return render_template('highest-marks.html')
 
+@app.route('/without_arrear')
+def without_arrear():
+    return render_template('without_arrear.html')
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -586,6 +590,126 @@ def highest_mark_u(marks_filename):
         })
 
     return render_template('highest_mark.html', top_30_students=top_30_students)
+
+@app.route('/without_a', methods=['GET', 'POST'])
+def without_a():
+    if request.method == 'POST':
+        if 'marks_file' not in request.files:
+            return redirect(request.url)
+
+        marks_file = request.files['marks_file']
+
+        if marks_file.filename == '':
+            return redirect(request.url)
+
+        if marks_file:
+            marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_file.filename)
+
+            marks_file.save(marks_path)
+
+            return redirect(url_for('without_arrears_a',
+                                    marks_filename=marks_file.filename))
+        
+        
+@app.route('/without-arrears/<marks_filename>')
+def without_arrears_a(marks_filename):
+    marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_filename)
+    try:
+        marks_data = pd.read_excel(marks_path)
+    except Exception as e:
+        return f"Error reading files: {str(e)}", 500
+
+    marks_data.columns = marks_data.columns.str.strip()
+
+    if 'Section' not in marks_data.columns:
+        return "The 'Section' column is missing. Please check the Excel file.", 400
+
+    print(marks_data['Section'].head())
+
+    marks_data['Section'] = marks_data['Section'].astype(str).str.strip().str.replace(r'\s+', '', regex=True)
+
+    if marks_data['Section'].isna().sum() > 0:
+        marks_data['Section'] = marks_data['Section'].fillna('Unknown')  
+
+    for column in marks_data.columns[4:]:
+        marks_data[column] = pd.to_numeric(marks_data[column], errors='coerce')
+
+    no_arrears_students = [] 
+    for _, student_row in marks_data.iterrows():
+        has_arrears = False
+        for course_code in marks_data.columns[4:]:
+            mark = student_row[course_code]
+            if pd.isna(mark) or mark < 25:  
+                has_arrears = True
+                break
+        if not has_arrears:
+            no_arrears_students.append({
+                'register_number': student_row['Reg. Number'],
+                'student_name': student_row['Student Name'],
+                'section': student_row['Section']
+            })
+
+    return render_template('without-arrears.html', no_arrears_students=no_arrears_students)
+
+@app.route('/without_ar', methods=['GET', 'POST'])
+def without_ar():
+    if request.method == 'POST':
+        if 'marks_file' not in request.files:
+            return redirect(request.url)
+
+        marks_file = request.files['marks_file']
+
+        if marks_file.filename == '':
+            return redirect(request.url)
+
+        if marks_file:
+            marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_file.filename)
+
+            marks_file.save(marks_path)
+
+            return redirect(url_for('without_arrears_ar',
+                                    marks_filename=marks_file.filename))
+        
+        
+@app.route('/without-arrear/<marks_filename>')
+def without_arrears_ar(marks_filename):
+    marks_path = os.path.join(app.config['UPLOAD_FOLDER'], marks_filename)
+    try:
+        marks_data = pd.read_excel(marks_path)
+    except Exception as e:
+        return f"Error reading files: {str(e)}", 500
+
+    marks_data.columns = marks_data.columns.str.strip()
+
+    if 'Section' not in marks_data.columns:
+        return "The 'Section' column is missing. Please check the Excel file.", 400
+
+    print(marks_data['Section'].head())
+
+    marks_data['Section'] = marks_data['Section'].astype(str).str.strip().str.replace(r'\s+', '', regex=True)
+
+    if marks_data['Section'].isna().sum() > 0:
+        marks_data['Section'] = marks_data['Section'].fillna('Unknown')  
+
+    for column in marks_data.columns[4:]:
+        marks_data[column] = pd.to_numeric(marks_data[column], errors='coerce')
+
+    no_arrears_students = [] 
+    for _, student_row in marks_data.iterrows():
+        has_arrears = False
+        for course_code in marks_data.columns[4:]:
+            mark = student_row[course_code]
+            if pd.isna(mark) or mark < 50:  
+                has_arrears = True
+                break
+        if not has_arrears:
+            no_arrears_students.append({
+                'register_number': student_row['Reg. Number'],
+                'student_name': student_row['Student Name'],
+                'section': student_row['Section']
+            })
+
+    return render_template('without-arrear.html', no_arrears_students=no_arrears_students)
 
 
 if __name__ == '__main__':

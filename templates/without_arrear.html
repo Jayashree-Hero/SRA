@@ -224,7 +224,7 @@
             <nav>
                 <ul class="nav-area">
                     <li><a href="/arrears">Students With Arrears</a></li>
-                    <li><a href="/without_arrear">Students Without Arrears</a></li>
+                    <li><a href="/highest-marks">Highest Mark</a></li>
                     <li><a href="/cae-analysis">Analytics</a></li>
                 </ul>
             </nav>
@@ -233,8 +233,8 @@
 
     <div class="forms-container">
         <div class="container">
-            <h2>Students with Highest Marks [50 Marks]</h2>
-            <form action="/highest_m" method="post" enctype="multipart/form-data">
+            <h2>Students Without Arrears [50 Marks]</h2>
+            <form action="/without_a" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="marks_file">Upload Marks Excel File:</label>
                     <input type="file" id="marks_file" name="marks_file" accept=".xlsx" required>
@@ -246,8 +246,8 @@
         </div>
 
         <div class="container">
-            <h2>Students with Highest Marks [100 Marks]</h2>
-            <form action="/highest_ma" method="post" enctype="multipart/form-data">
+            <h2>Students Without Arrears [100 Marks]</h2>
+            <form action="/without_ar" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="marks_file">Upload Marks Excel File:</label>
                     <input type="file" id="marks_file" name="marks_file" accept=".xlsx" required>

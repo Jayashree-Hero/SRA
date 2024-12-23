@@ -275,7 +275,7 @@
                 <ul class="nav-area">
                     <li><a href="/arrears">With Arrear</a></li>
                     <li><a href="/highest-marks">Highest Marks</a></li>
-                    <li><a href="/overall_analytics">Without Arrears</a></li>
+                    <li><a href="/without_arrear">Without Arrears</a></li>
                     <li><a href="/cae-analysis">Analytics</a></li>
                 </ul>
             </nav>
@@ -286,6 +286,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>S. No</th>
                     <th>Register Number</th>
                     <th>Student Name</th>
                     <th>Section</th>
@@ -295,6 +296,7 @@
             <tbody>
                 {% for student in top_30_students %}
                 <tr>
+                    <td>{{ loop.index }}</td>
                     <td>{{ student.register_number }}</td>
                     <td>{{ student.student_name }}</td>
                     <td>{{ student.section }}</td>

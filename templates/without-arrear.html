@@ -282,7 +282,7 @@
         </div>
     </div>
     <div class="container">
-        <h2><b>STUDENTS IN TOP 30</b></h2>
+        <h2><b>STUDENTS WITHOUT ARREAR</b></h2>
         <table>
             <thead>
                 <tr>
@@ -290,17 +290,15 @@
                     <th>Register Number</th>
                     <th>Student Name</th>
                     <th>Section</th>
-                    <th>Total Marks</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for student in top_30_students %}
+                <tbody>
+                {% for student in no_arrears_students %}
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td>{{ student.register_number }}</td>
                     <td>{{ student.student_name }}</td>
                     <td>{{ student.section }}</td>
-                    <td>{{ student.total_marks }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
